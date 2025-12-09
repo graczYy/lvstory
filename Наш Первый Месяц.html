@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark: #0a0e1a;
+            --darker: #050609;
+            --gray-1: #1a1a1f;
+            --gray-2: #242428;
+            --gray-3: #333338;
+            --accent-gold: #d4af37;
+            --text-light: #ffffff;
+            --text-muted: #b0b0b8;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: #050609;
+            color: var(--text-light);
+            overflow: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(20, 20, 25, 1) 0%, rgba(15, 15, 18, 1) 100%);
+            pointer-events: none;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: softGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateX(-20px) translateY(10px); }
+            to { opacity: 1; transform: translateX(0) translateY(0); }
+        }
+
+        @keyframes numberCountUp {
+            from { opacity: 0; transform: scale(0.8) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes photoZoom {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes softGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2)); }
+            50% { filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.4)); }
+        }
+
+        /* Full Screen Section */
+        .fullscreen-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 40px 20px;
+            animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow-y: auto;
+        }
+
+        .fullscreen-section.active {
+            display: flex;
+        }
+
+        /* Timer Section */
+        .timer-display {
+            font-size: 6.5em;
+            font-weight: 300;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 40px;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -2px;
+            animation: numberCountUp 1s ease-out;
+        }
+
+        .timer-label {
+            font-size: 1.1em;
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* Messages Section */
+        .messages-container {
+            max-width: 500px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .message-counter {
+            text-align: center;
+            font-size: 3.5em;
+            font-weight: 300;
+            color: var(--text-light);
+            margin-bottom: 50px;
+            animation: numberCountUp 1s ease-out;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+            max-width: 85%;
+            animation: messageSlide 0.5s ease-out forwards;
+            font-size: 1em;
+            line-height: 1.5;
+            backdrop-filter: blur(10px);
+        }
+
+        .message:nth-child(1) { animation-delay: 0.1s; }
+        .message:nth-child(2) { animation-delay: 0.25s; }
+        .message:nth-child(3) { animation-delay: 0.4s; }
+        .message:nth-child(4) { animation-delay: 0.55s; }
+        .message:nth-child(5) { animation-delay: 0.7s; }
+        .message:nth-child(6) { animation-delay: 0.85s; }
+        .message:nth-child(7) { animation-delay: 1s; }
+        .message:nth-child(8) { animation-delay: 1.15s; }
+
+        .message.from-vika {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light);
+            align-self: flex-start;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .message.from-me {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text-light);
+            align-self: flex-end;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .message-author {
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-bottom: 4px;
+            opacity: 0.7;
+            letter-spacing: 0.3px;
+        }
+
+        /* Big Card */
+        .big-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 80px 50px;
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            animation: scaleIn 0.8s ease-out;
+            backdrop-filter: blur(20px);
+        }
+
+        .big-card-text {
+            font-size: 3em;
+            font-weight: 300;
+            line-height: 1.5;
+            letter-spacing: -1px;
+        }
+
+        /* Nicknames Grid */
+        .nicknames-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .nickname-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out backwards, shimmer 3s ease-in-out infinite;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nickname-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shimmerMove 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)); }
+            50% { background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05)); }
+        }
+
+        @keyframes shimmerMove {
+            0% { transform: translate(-100%, -100%) rotate(45deg); }
+            100% { transform: translate(100%, 100%) rotate(45deg); }
+        }
+
+        .nickname-card:nth-child(1) { animation-delay: 0.1s; }
+        .nickname-card:nth-child(2) { animation-delay: 0.2s; }
+        .nickname-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .nickname-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nickname-emoji {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .nickname-text {
+            font-size: 1.4em;
+            font-weight: 400;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .nickname-rank {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .nickname-count {
+            font-size: 3.5em;
+            color: var(--text-light);
+            font-weight: 300;
+            letter-spacing: -2px;
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 200;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 28px;
+            font-size: 1em;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            font-family: 'Segoe UI', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light);
+            border: 1px solid var(--border-subtle);
+            padding: 10px 20px;
+            font-size: 0.95em;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-heart {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border-subtle);
+            padding: 10px 15px;
+            font-size: 1.2em;
+        }
+
+        .btn-heart:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Counter */
+        .section-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            width: auto;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            font-weight: 500;
+            z-index: 150;
+            letter-spacing: 0.3px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .timer-display {
+                font-size: 3em;
+            }
+
+            .big-card {
+                padding: 40px 25px;
+            }
+
+            .big-card-text {
+                font-size: 1.8em;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .nav-buttons {
+                bottom: 20px;
+                gap: 10px;
+            }
+
+            button {
+                padding: 12px 25px;
+                font-size: 0.95em;
+            }
+
+            .section-counter {
+                width: 60px;
+                height: 60px;
+                font-size: 1.2em;
+                top: 20px;
+                right: 20px;
+            }
+
+            .nicknames-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Section Counter -->
+    <div class="section-counter">
+        <span id="sectionNumber">1</span> / <span id="totalSections">15</span>
+    </div>
+
+    <!-- 0. How It Started -->
+    <div class="fullscreen-section active" id="section-start">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">КАК ВСЕ НАЧИНАЛОСЬ</h1>
+        <div class="messages-container" id="startContainer"></div>
+    </div>
+
+    <!-- 0.5. Tension Moment -->
+    <div class="fullscreen-section" id="section-tension">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">ВОЛНЕНИЕ</h1>
+        <div class="messages-container" id="tensionContainer"></div>
+    </div>
+
+    <!-- 1. Days Together (Timer) -->
+    <div class="fullscreen-section" id="section-days">
+        <h1 style="font-size: 2.5em; margin-bottom: 40px; color: var(--text-muted); letter-spacing: -0.5px;">ДНЕЙ ВМЕСТЕ</h1>
+        <div class="timer-display" id="timerDisplay">30:12:45:23</div>
+        <div class="timer-label">Считаем с 6 ноября 16:38:54</div>
+    </div>
+
+    <!-- 1.5. Pre-Stats Message -->
+    <div class="fullscreen-section" id="section-prestats">
+        <div class="big-card">
+            <div class="big-card-text" style="font-size: 2.2em; line-height: 1.6;">а теперь погрузимся в этот месяц цифрами......</div>
+        </div>
+    </div>
+
+    <!-- 2. Messages -->
+    <div class="fullscreen-section" id="section-messages">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">СООБЩЕНИЙ</h1>
+        <div class="message-counter" id="messageCount">0</div>
+        <div class="messages-container" id="messagesContainer"></div>
+    </div>
+
+    <!-- 3. Video Calls -->
+    <div class="fullscreen-section" id="section-calls">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">ЗВОНКОВ</h1>
+        <div style="font-size: 6.5em; font-weight: 300; color: var(--text-light); animation: numberCountUp 1s ease-out; letter-spacing: -2px;" id="callsCount">0</div>
+        <div class="timer-label">минут звонков</div>
+    </div>
+
+    <!-- 5. I Love You Count -->
+    <div class="fullscreen-section" id="section-iloves">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">ЛЮБЛЮ ТЕБЯ</h1>
+        <div style="font-size: 6.5em; font-weight: 300; color: var(--text-light); animation: numberCountUp 1s ease-out; letter-spacing: -2px;" id="ilovesCount">0</div>
+        <div class="timer-label">раз мы говорили "Я люблю тебя"</div>
+    </div>
+
+    <!-- 6. Chat Deletions -->
+    <div class="fullscreen-section" id="section-deletions">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">УДАЛЕННЫХ ЧАТОВ</h1>
+        <div class="message-counter" id="deletionsCount">0</div>
+        <div class="messages-container" id="deletionsContainer"></div>
+    </div>
+
+    <!-- 8. Nicknames -->
+    <div class="fullscreen-section" id="section-nicknames">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">КАК МЫ ДРУГ ДРУГА ЗОВЕМ</h1>
+        <div class="nicknames-grid">
+            <div class="nickname-card">
+                <div class="nickname-emoji">💋</div>
+                <div class="nickname-text">Любимый/любимая</div>
+                <div class="nickname-rank">1 место</div>
+                <div class="nickname-count" id="nickname3Count">0</div>
+            </div>
+            <div class="nickname-card">
+                <div class="nickname-emoji">🐱</div>
+                <div class="nickname-text">Коть</div>
+                <div class="nickname-rank">2 место</div>
+                <div class="nickname-count" id="nickname1Count">0</div>
+            </div>
+            <div class="nickname-card">
+                <div class="nickname-emoji">👶</div>
+                <div class="nickname-text">Малыш</div>
+                <div class="nickname-rank">3 место</div>
+                <div class="nickname-count" id="nickname2Count">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Sleepy Calls -->
+    <div class="fullscreen-section" id="section-sleepy">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">ЗАСЫПАЛИ В ЗВОНКАХ</h1>
+        <div style="font-size: 6.5em; font-weight: 300; color: var(--text-light); animation: numberCountUp 1s ease-out; letter-spacing: -2px;" id="sleepyCount">17</div>
+        <div class="timer-label">раз</div>
+    </div>
+
+    <!-- 10. Missed Calls -->
+    <div class="fullscreen-section" id="section-missed">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">НЕ СЛЫШАЛ ЗВОНКИ</h1>
+        <div style="font-size: 6.5em; font-weight: 300; color: var(--text-light); animation: numberCountUp 1s ease-out; letter-spacing: -2px;" id="missedCount">6</div>
+        <div class="timer-label">раз (извини..)</div>
+    </div>
+
+    <!-- 11. Intimate Moments -->
+    <div class="fullscreen-section" id="section-intimate">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">САМА ЗНАЕШЬ 😏</h1>
+        <div style="font-size: 6.5em; font-weight: 300; color: var(--text-light); animation: numberCountUp 1s ease-out; letter-spacing: -2px;" id="intimateCount">34</div>
+        <div class="timer-label">раз</div>
+        <div class="messages-container" id="intimateContainer"></div>
+    </div>
+
+    <!-- 12. Meetings -->
+    <div class="fullscreen-section" id="section-meets">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">ВСТРЕЧ</h1>
+        <div class="big-card">
+            <div class="big-card-text" style="font-size: 5em; margin-bottom: 40px;">0</div>
+            <div class="big-card-text" style="font-size: 2em;">😔 но так жаль 😔</div>
+        </div>
+    </div>
+
+    <!-- 12.5. Future Meeting -->
+    <div class="fullscreen-section" id="section-moscow">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">НАША ВСТРЕЧА</h1>
+        <div class="big-card">
+            <div class="big-card-text">Очень жду встречу с тобой в Москве ❤️</div>
+        </div>
+    </div>
+
+    <!-- 13. I Love You Big -->
+    <div class="fullscreen-section" id="section-iloveyou">
+        <div class="big-card">
+            <div class="big-card-text">люблю тебя ❤️</div>
+        </div>
+    </div>
+
+    <!-- 14. Full Stats -->
+    <div class="fullscreen-section" id="section-stats">
+        <div style="text-align: center; max-width: 800px; width: 100%;">
+            <div style="font-size: 2.2em; font-weight: 300; margin-bottom: 60px; letter-spacing: -0.5px;">СТАТИСТИКА НАШЕЙ ЛЮБВИ</div>
+            <div id="fullStats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; font-size: 1.1em;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 15. Films -->
+    <div class="fullscreen-section" id="section-films">
+        <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">СМОТРЕЛИ ФИЛЬМОВ</h1>
+        <div style="font-size: 6.5em; font-weight: 300; color: var(--text-light); animation: numberCountUp 1s ease-out; letter-spacing: -2px;" id="filmsCount">0</div>
+        <div class="timer-label">фильмов</div>
+        <div class="big-card" style="margin-top: 60px; padding: 40px 30px;">
+            <div class="big-card-text" style="font-size: 1.8em; margin-bottom: 30px;">хочу еще! 🎬</div>
+            <button class="btn-primary" style="width: 100%; padding: 16px 24px; font-size: 1.1em; cursor: pointer;" onclick="window.open('https://t.me/m/yqzWu393NTdl', '_blank')">Давай посмотрим завтра?</button>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <button class="btn-nav" onclick="previousSection()">← Назад</button>
+        <button class="btn-nav" onclick="nextSection()">Вперед →</button>
+        <button class="btn-heart" onclick="createConfetti()">❤️</button>
+    </div>
+
+    <script>
+        let currentSection = 0;
+
+        const sections = [
+            'section-start', 'section-tension', 'section-prestats', 'section-days', 'section-messages', 'section-calls', 
+            'section-iloves', 'section-deletions', 'section-nicknames', 'section-sleepy', 'section-missed', 'section-intimate',
+            'section-meets', 'section-moscow', 'section-iloveyou', 'section-films', 'section-stats'
+        ];
+
+        function startPresentation() {
+            currentSection = 0;
+            showSection(0);
+            setupStartMessages();
+            setupTensionMessages();
+            startTimer();
+            setupMessages();
+            setupDeletionMessages();
+            setupIntimateMessages();
+            buildFullStats();
+            animateIloveCounts();
+        }
+
+        function setupStartMessages() {
+            const messages = [
+                { author: 'Вика', text: 'Не самовлюбленно однако', from: 'vika' },
+                { author: 'Я', text: 'а че такое, зачем тг', from: 'me' },
+                { author: 'Вика', text: 'Ну тут удалять сообщения тебе не надо будет', from: 'vika' },
+                { author: 'Вика', text: 'А во вторых ответь почему у тебя друг тупенький', from: 'vika' }
+            ];
+
+            const container = document.getElementById('startContainer');
+            container.innerHTML = messages.map(msg => `
+                <div class="message ${msg.from === 'vika' ? 'from-vika' : 'from-me'}">
+                    <div class="message-author">${msg.from === 'vika' ? 'Вика' : 'Ты'}</div>
+                    <div>${msg.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function setupTensionMessages() {
+            const messages = [
+                { author: 'Я', text: 'с тобой хоть че', from: 'me' },
+                { author: 'Я', text: 'хоть на край света', from: 'me' },
+                { author: 'Вика', text: 'Да я уже не понимаю шутишь ты или нет😩😩😩😩', from: 'vika' },
+                { author: 'Я', text: 'а как хочется?)', from: 'me' },
+                { author: 'Вика', text: 'А это не важно, не отвечу', from: 'vika' },
+                { author: 'Я', text: 'Ну шутки есть шутки, но я не планировал тебя привязывать никуда 😂', from: 'me' },
+                { author: 'Вика', text: 'К себе тоже?)', from: 'vika' },
+                { author: 'Я', text: 'Вхазвхзав, посмотрим', from: 'me' }
+            ];
+
+            const container = document.getElementById('tensionContainer');
+            container.innerHTML = messages.map(msg => `
+                <div class="message ${msg.from === 'vika' ? 'from-vika' : 'from-me'}">
+                    <div class="message-author">${msg.from === 'vika' ? 'Вика' : 'Ты'}</div>
+                    <div>${msg.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function animateIloveCounts() {
+            animateNumber('messageCount', 50623, 2500);
+            animateNumber('callsCount', 8940, 2500);
+            animateNumber('ilovesCount', 567, 2500);
+            animateNumber('deletionsCount', 33, 2500);
+            animateNumber('nickname1Count', 122, 2500);
+            animateNumber('nickname2Count', 68, 2500);
+            animateNumber('nickname3Count', 146, 2500);
+            animateNumber('filmsCount', 1, 2500);
+        }
+
+        function animateNumber(elementId, finalValue, duration) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const increment = finalValue / (duration / 16);
+            let currentValue = 0;
+
+            function update() {
+                currentValue += increment;
+                if (currentValue >= finalValue) {
+                    element.textContent = finalValue.toLocaleString('ru-RU');
+                } else {
+                    element.textContent = Math.floor(currentValue).toLocaleString('ru-RU');
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        function buildFullStats() {
+            const stats = `
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.6s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">32</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">📅 Дней вместе</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.7s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">50,623</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">💬 Сообщений</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.8s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">8,940</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">☎️ Минут звонков</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.9s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">567</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">💕 Люблю тебя</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">17</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">😴 Засыпали в звонке</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.1s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">6</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">📴 Не слышал звонки</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.2s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">34</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">🔥 Сама знаешь</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.3s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">0</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">👋 Встреч (жду Москву)</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.4s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">33</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">🗑️ Удаленных чатов</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.5s ease-out;">
+                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">1</div>
+                    <div style="color: var(--text-muted); font-size: 0.95em;">🎬 Фильмов вместе</div>
+                </div>
+            `;
+            document.getElementById('fullStats').innerHTML = stats;
+        }
+
+        function startTimer() {
+            const startDate = new Date('2025-11-06T16:38:54').getTime();
+
+            function updateTimer() {
+                const now = new Date().getTime();
+                const diff = now - startDate;
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                const display = `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.getElementById('timerDisplay').textContent = display;
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        function setupMessages() {
+            const messages = [
+                { author: 'Вика', text: 'ну чтоб не втыкал', from: 'vika' },
+                { author: 'Вика', text: 'люблю тебя', from: 'vika' },
+                { author: 'Я', text: 'И я тебя)', from: 'me' },
+            ];
+
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = messages.map(msg => `
+                <div class="message ${msg.from === 'vika' ? 'from-vika' : 'from-me'}">
+                    <div class="message-author">${msg.from === 'vika' ? 'Вика' : 'Ты'}</div>
+                    <div>${msg.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function setupDeletionMessages() {
+            const messages = [
+                { author: 'Вика', text: 'Ты удалит у двоих💔', from: 'vika' },
+                { author: 'Я', text: 'Ну так пришлось', from: 'me' },
+                { author: 'Вика', text: 'Все не хочу болтать', from: 'vika' },
+                { author: 'Вика', text: 'Мне грустно', from: 'vika' }
+            ];
+
+            const container = document.getElementById('deletionsContainer');
+            container.innerHTML = messages.map(msg => `
+                <div class="message ${msg.from === 'vika' ? 'from-vika' : 'from-me'}">
+                    <div class="message-author">${msg.from === 'vika' ? 'Вика' : 'Ты'}</div>
+                    <div>${msg.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function setupIntimateMessages() {
+            const messages = [
+                { author: 'Вика', text: 'Ну клянусь первый раз Так было', from: 'vika' },
+                { author: 'Вика', text: 'Я думала я умираю пхаххахаха', from: 'vika' },
+                { author: 'Я', text: 'Это же хорошо)', from: 'me' }
+            ];
+
+            const container = document.getElementById('intimateContainer');
+            container.innerHTML = messages.map(msg => `
+                <div class="message ${msg.from === 'vika' ? 'from-vika' : 'from-me'}">
+                    <div class="message-author">${msg.from === 'vika' ? 'Вика' : 'Ты'}</div>
+                    <div>${msg.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function showSection(index) {
+            document.querySelectorAll('.fullscreen-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            if (index >= 0 && index < sections.length) {
+                currentSection = index;
+                document.getElementById(sections[index]).classList.add('active');
+                document.getElementById('sectionNumber').textContent = (index + 1) + ' / ' + sections.length;
+            }
+        }
+
+        function nextSection() {
+            if (currentSection < sections.length - 1) {
+                showSection(currentSection + 1);
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 0) {
+                showSection(currentSection - 1);
+            }
+        }
+
+        function createConfetti() {
+            const emojis = ['❤️', '💕', '✨', '💖', '🎉', '💫', '🌹', '💝'];
+            for (let i = 0; i < 60; i++) {
+                const confetti = document.createElement('div');
+                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                confetti.style.position = 'fixed';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = '-20px';
+                confetti.style.fontSize = '28px';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.zIndex = '999';
+
+                const duration = 2.5 + Math.random() * 1;
+                const distance = 150 + Math.random() * 250;
+                const angle = (Math.random() - 0.5) * 80;
+
+                confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${distance}px) translateX(${Math.sin(angle * Math.PI / 180) * 150}px) rotate(720deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+                });
+
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), duration * 1000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            startPresentation();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSection();
+            if (e.key === 'ArrowLeft') previousSection();
+        });
+    </script>
+</body>
+</html>
