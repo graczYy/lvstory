@@ -196,6 +196,45 @@
             opacity: 0.7;
             letter-spacing: 0.3px;
         }
+       /* Message zoom modal */
+.message-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+}
+
+.message-modal.active {
+    display: flex;
+}
+
+.message-modal-content {
+    max-width: 500px;
+    width: 90%;
+    background: rgba(10, 10, 15, 0.95);
+    border-radius: 20px;
+    padding: 24px 24px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    animation: scaleIn 0.25s ease-out;
+    position: relative;
+}
+
+.message-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 1.4em;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.message-modal-close:hover {
+    opacity: 1;
+}
 
         /* Big Card */
         .big-card {
@@ -296,6 +335,58 @@
             font-weight: 300;
             letter-spacing: -2px;
         }
+/* Stats zoom modal */
+.stats-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 950;
+}
+
+.stats-modal.active {
+    display: flex;
+}
+
+.stats-modal-card {
+    background: rgba(15, 15, 25, 0.98);
+    border-radius: 24px;
+    padding: 40px 36px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    min-width: 260px;
+    max-width: 360px;
+    text-align: center;
+    animation: scaleIn 0.25s ease-out;
+    position: relative;
+}
+
+.stats-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 1.4em;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.stats-modal-close:hover {
+    opacity: 1;
+}
+
+.stats-modal-value {
+    font-size: 3.2em;
+    font-weight: 300;
+    margin-bottom: 12px;
+    letter-spacing: -2px;
+}
+
+.stats-modal-label {
+    font-size: 1em;
+    color: var(--text-muted);
+}
 
         /* Navigation */
         .nav-buttons {
@@ -424,7 +515,11 @@
     <div class="section-counter">
         <span id="sectionNumber">1</span> / <span id="totalSections">15</span>
     </div>
-
+<div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 160; text-align: center;">
+    <div style="font-size: 2.8em; font-weight: 300; letter-spacing: -0.5px; color: var(--text-light); text-transform: uppercase;">
+        Итоги месяца
+    </div>
+</div>
     <!-- 0. How It Started -->
     <div class="fullscreen-section active" id="section-start">
         <h1 style="font-size: 2.5em; margin-bottom: 60px; color: var(--text-muted); letter-spacing: -0.5px;">КАК ВСЕ НАЧИНАЛОСЬ</h1>
@@ -569,6 +664,22 @@
             <button class="btn-primary" style="width: 100%; padding: 16px 24px; font-size: 1.1em; cursor: pointer;" onclick="window.open('https://t.me/m/yqzWu393NTdl', '_blank')">Давай посмотрим завтра?</button>
         </div>
     </div>
+    <!-- Message Zoom Modal -->
+<div class="message-modal" id="messageModal">
+    <div class="message-modal-content">
+        <div class="message-modal-close" onclick="closeMessageModal()">✕</div>
+        <div class="message" id="messageModalInner" style="max-width: 100%; margin: 10px 0 0 0;"></div>
+    </div>
+</div>
+    
+<!-- Stats Zoom Modal -->
+<div class="stats-modal" id="statsModal">
+    <div class="stats-modal-card">
+        <div class="stats-modal-close" onclick="closeStatsModal()">✕</div>
+        <div class="stats-modal-value" id="statsModalValue"></div>
+        <div class="stats-modal-label" id="statsModalLabel"></div>
+    </div>
+</div>
 
     <!-- Navigation Buttons -->
     <div class="nav-buttons">
@@ -597,6 +708,7 @@
             setupIntimateMessages();
             buildFullStats();
             animateIloveCounts();
+            makeMessagesClickable();
         }
 
         function setupStartMessages() {
@@ -638,14 +750,14 @@
         }
 
         function animateIloveCounts() {
-            animateNumber('messageCount', 50623, 2500);
-            animateNumber('callsCount', 8940, 2500);
-            animateNumber('ilovesCount', 567, 2500);
-            animateNumber('deletionsCount', 33, 2500);
-            animateNumber('nickname1Count', 122, 2500);
-            animateNumber('nickname2Count', 68, 2500);
-            animateNumber('nickname3Count', 146, 2500);
-            animateNumber('filmsCount', 1, 2500);
+            animateNumber('messageCount', 50623, 9000);
+            animateNumber('callsCount', 8940, 9000);
+            animateNumber('ilovesCount', 567, 9000);
+            animateNumber('deletionsCount', 33, 9000);
+            animateNumber('nickname1Count', 122, 9000);
+            animateNumber('nickname2Count', 68, 9000);
+            animateNumber('nickname3Count', 146, 9000);
+            animateNumber('filmsCount', 1, 9000);
         }
 
         function animateNumber(elementId, finalValue, duration) {
@@ -668,48 +780,53 @@
         }
 
         function buildFullStats() {
-            const stats = `
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.6s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">33</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">📅 Дней вместе</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.7s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">50,623</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">💬 Сообщений</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.8s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">8,940</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">☎️ Минут звонков</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.9s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">567</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">💕 Люблю тебя</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">17</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">😴 Засыпали в звонке</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.1s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">6</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">📴 Не слышал звонки</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.2s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">34</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">🔥 Сама знаешь</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.3s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">0</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">👋 Встреч (жду Москву)</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.4s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">33</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">🗑️ Удаленных чатов</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.5s ease-out;">
-                    <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">1</div>
-                    <div style="color: var(--text-muted); font-size: 0.95em;">🎬 Фильмов вместе</div>
-                </div>
-            `;
+const stats = `
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.6s ease-out; cursor: pointer;"
+         onclick="openStatsModal('32', '📅 Дней вместе')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">32</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">📅 Дней вместе</div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.7s ease-out; cursor: pointer;"
+         onclick="openStatsModal('50,623', '💬 Сообщений')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">50,623</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">💬 Сообщений</div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.8s ease-out; cursor: pointer;"
+         onclick="openStatsModal('8,940', '☎️ Минут звонков')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">8,940</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">☎️ Минут звонков</div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 0.9s ease-out; cursor: pointer;"
+         onclick="openStatsModal('567', '💕 Люблю тебя')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">567</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">💕 Люблю тебя</div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1s ease-out; cursor: pointer;"
+         onclick="openStatsModal('17', '😴 Засыпали в звонке')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">17</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">😴 Засыпали в звонке</div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.1s ease-out; cursor: pointer;"
+         onclick="openStatsModal('6', '📴 Не слышал звонки')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">6</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">📴 Не слышал звонки</div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.2s ease-out; cursor: pointer;"
+         onclick="openStatsModal('34', '🔥 Сама знаешь')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">34</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">🔥 Сама знаешь</div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.3s ease-out; cursor: pointer;"
+         onclick="openStatsModal('0', '👋 Встреч (жду Москву)')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">0</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">👋 Встреч (жду Москву)</div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; animation: fadeInUp 1.4s ease-out; cursor: pointer;"
+         onclick="openStatsModal('33', '🗑️ Удаленных чатов')">
+        <div style="font-size: 2.5em; font-weight: 300; margin-bottom: 10px;">33</div>
+        <div style="color: var(--text-muted); font-size: 0.95em;">🗑️ Удаленных чатов</div>
+    </div>
+`;
             document.getElementById('fullStats').innerHTML = stats;
         }
 
@@ -781,6 +898,23 @@
                 </div>
             `).join('');
         }
+        function makeMessagesClickable() {
+    document.querySelectorAll('.message').forEach(msg => {
+        msg.style.cursor = 'pointer';
+        msg.onclick = () => openMessageModal(msg);
+    });
+}
+
+function openMessageModal(messageEl) {
+    const modal = document.getElementById('messageModal');
+    const inner = document.getElementById('messageModalInner');
+    inner.innerHTML = messageEl.innerHTML;
+    modal.classList.add('active');
+}
+
+function closeMessageModal() {
+    document.getElementById('messageModal').classList.remove('active');
+}
 
         function showSection(index) {
             document.querySelectorAll('.fullscreen-section').forEach(section => {
@@ -838,6 +972,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             startPresentation();
         });
+
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight') nextSection();
